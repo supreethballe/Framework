@@ -17,6 +17,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.crm.comcast.genericutility.ExcelUtility;
 import com.crm.comcast.genericutility.PropertyFileUtility;
+import com.crm.comcast.genericutility.WebDriverUtility;
 
 /**
  * 
@@ -26,8 +27,14 @@ import com.crm.comcast.genericutility.PropertyFileUtility;
 public class CreatePurcahseOrderTest {
 	
 	public static void main(String[] args) throws Throwable {
-		/*read common data*/
+		/* crate Object for Utility*/
 		 PropertyFileUtility pLib = new PropertyFileUtility();
+		 ExcelUtility eLib = new ExcelUtility();
+		 WebDriverUtility wLib = new WebDriverUtility();
+
+		
+		/*read common data*/
+		
 		 String BROWSER = pLib.readDataFromPropertyFfile("browser");
 		 String USERNAME = pLib.readDataFromPropertyFfile("username");
 		 String PASSWORD = pLib.readDataFromPropertyFfile("password");
@@ -35,7 +42,6 @@ public class CreatePurcahseOrderTest {
 
 		
 		/*read test script data*/
-		 ExcelUtility eLib = new ExcelUtility();
 		 String subject = eLib.getExcelData("po", 1, 2);
 		 String venDorName = eLib.getExcelData("po", 1, 3);
 		 String serachValue = eLib.getExcelData("po", 1, 4);
@@ -54,16 +60,17 @@ public class CreatePurcahseOrderTest {
 	      }else if(BROWSER.equalsIgnoreCase("ie")) {
 	    	   driver = new InternetExplorerDriver();
 	      }
-		   driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-	      driver.get(URL);
+		   wLib.waitforPageToLoad(driver);
+ 	      driver.get(URL);
 		  driver.findElement(By.name("user_name")).sendKeys(USERNAME);
 		  driver.findElement(By.name("user_password")).sendKeys(PASSWORD);
 		  driver.findElement(By.id("submitButton")).click();
 	        
 		 
 		/*step 2 : navigate to purchase Oder Page*/ 
-		   Actions act = new Actions(driver);
-		   act.moveToElement(driver.findElement(By.linkText("More"))).perform();
+		 
+		   WebElement moreWb = driver.findElement(By.linkText("More"));
+		   wLib.mouseOver(driver, moreWb);
 		   driver.findElement(By.linkText("Purchase Order")).click();
 		  
 		/*step 3 : navigate to create purchase Oder Page*/ 
@@ -73,48 +80,26 @@ public class CreatePurcahseOrderTest {
 		   driver.findElement(By.name("subject")).sendKeys(subject);
 		   driver.findElement(By.xpath("//input[@name='vendor_name']/following-sibling::img")).click();
 		   /*Switch to child browser*/
-		   String parentWindowID = driver.getWindowHandle();
-		   Set<String> set = driver.getWindowHandles();
-		   Iterator<String> it = set.iterator();
-            for(int i=0; i<set.size(); i++) {
-            	 String cusrrentWindowID = it.next();
-            	 driver.switchTo().window(cusrrentWindowID);
-            	 String actWindowTitle = driver.getTitle();
-
-	            	 if(actWindowTitle.contains("Vendors")) {	            		 
-	            		 break;
-	            	 }
-            	
-             }
+		  wLib.switchToWindow(driver, "Vendors");
 
 		  WebElement swb =driver.findElement(By.xpath("//select[@name='search_field']")); 
-		  Select sel =new Select(swb); sel.selectByVisibleText(serachValue);
+		  wLib.select(swb, serachValue);
 		 
 		 driver.findElement(By.name("search_text")).sendKeys(venDorName);
 		 driver.findElement(By.name("search")).click();
 		 driver.findElement(By.linkText(venDorName)).click();
 		   /*Switch back to parent browser*/
-		   driver.switchTo().window(parentWindowID);
+		  wLib.switchToWindow(driver, "Purchase Order");
 		   
 		   //select product 
 		   driver.findElement(By.id("searchIcon1")).click();
-		   Set<String> set1 = driver.getWindowHandles();
-		   Iterator<String> it1 = set1.iterator();
-            for(int i=0; i<set1.size(); i++) {
-            	 String cusrrentWindowID = it1.next();
-            	 driver.switchTo().window(cusrrentWindowID);
-            	 String actWindowTitle = driver.getTitle();
-
-	            	 if(actWindowTitle.contains("Products")) {	            		 
-	            		 break;
-	            	 }
-            	
-             }
+		   wLib.switchToWindow(driver, "Product");
+		   
    		 driver.findElement(By.name("search_text")).sendKeys(productName);
    		 driver.findElement(By.name("search")).click();
    		 driver.findElement(By.linkText(productName)).click();
 		   /*Switch back to parent browser*/
-		   driver.switchTo().window(parentWindowID);
+   	      wLib.switchToWindow(driver, "Purchase Order");
 		  driver.findElement(By.id("qty1")).sendKeys(qty);
 		  
 		  driver.findElement(By.name("bill_street")).sendKeys(bAddress);
@@ -130,8 +115,10 @@ public class CreatePurcahseOrderTest {
 
 		  }
 		/*step 6: logout*/
-		  Actions act2 = new Actions(driver);
-		  act2.moveToElement(driver.findElement(By.xpath("//img[@src='themes/softed/images/user.PNG']"))).perform();
+		
+		  WebElement adminWb = driver.findElement(By.xpath("//img[@src='themes/softed/images/user.PNG']"));
+		  
+		  wLib.mouseOver(driver, adminWb);
 		  driver.findElement(By.linkText("Sign Out")).click();
 		  
 		  
