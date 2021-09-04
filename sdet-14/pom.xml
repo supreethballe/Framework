@@ -28,7 +28,12 @@
     <version>8.0.25</version>
 </dependency>
 
-
+<!-- https://mvnrepository.com/artifact/com.aventstack/extentreports -->
+<dependency>
+    <groupId>com.aventstack</groupId>
+    <artifactId>extentreports</artifactId>
+    <version>5.0.1</version>
+</dependency>
     <dependency>
     <groupId>org.testng</groupId>
     <artifactId>testng</artifactId>
@@ -36,9 +41,9 @@
 </dependency>
 
 	<dependency>
-	    <groupId>org.seleniumhq.selenium</groupId>
-	    <artifactId>selenium-java</artifactId>
-	    <version>3.141.59</version>
+		<groupId>org.seleniumhq.selenium</groupId>
+		<artifactId>selenium-java</artifactId>
+		<version>3.141.59</version>
 	</dependency>
 
 <!-- https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple -->

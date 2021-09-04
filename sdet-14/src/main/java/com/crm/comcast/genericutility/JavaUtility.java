@@ -24,7 +24,7 @@ public class JavaUtility {
 	 * get current system date along with date & time 
 	 * @author Deepak
 	 */
-	public String getCurrentSystemDate()
+	public static String getCurrentSystemDate()
 	{
 		Date date = new Date();
 		String currentDate=date.toString();
